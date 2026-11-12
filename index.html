@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Information System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- LOGIN -->
+  <div id="loginView" class="loginWrap">
+    <div class="card loginCard">
+      <h1>🎓 Student Information System</h1>
+      <div class="tabs" id="roleTabs">
+        <button type="button" data-role="student" class="active">Student</button>
+        <button type="button" data-role="professor">Professor</button>
+        <button type="button" data-role="admin">Admin</button>
+      </div>
+      <form id="loginForm">
+        <input id="loginId" placeholder="Roll No" required autocomplete="username">
+        <input id="loginPw" type="password" placeholder="Password" required autocomplete="current-password">
+        <button type="submit" id="loginBtn">Login</button>
+      </form>
+      <p id="loginMsg" class="msg"></p>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="appView" hidden>
+    <header>
+      <h1>🎓 SIS <small id="roleBadge"></small></h1>
+      <div class="hdrRight">
+        <span id="userName"></span>
+        <button class="ghost small" id="pwBtn">Change Password</button>
+        <button class="ghost small" id="logoutBtn">Logout</button>
+      </div>
+    </header>
+    <main>
+      <p id="msg" class="msg"></p>
+
+      <!-- STUDENT -->
+      <section id="studentPanel" hidden>
+        <div class="card"><h2>My Profile</h2><dl id="profile"></dl></div>
+        <div class="card"><h2>My Attendance</h2><p id="myAtt"></p></div>
+        <div class="card"><h2>My Marks</h2>
+          <div class="tableWrap"><table><thead><tr><th>Semester</th><th>Subject</th><th>Marks</th><th>Out of</th></tr></thead><tbody id="myMarks"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- PROFESSOR -->
+      <section id="profPanel" hidden>
+        <div class="tabs" id="profTabs">
+          <button data-tab="tabStudents" class="active">Students</button>
+          <button data-tab="tabAttendance">Attendance</button>
+          <button data-tab="tabMarks">Marks</button>
+        </div>
+
+        <div id="tabStudents" class="pane">
+          <div class="card">
+            <h2 id="stuFormTitle">Add Student</h2>
+            <form id="stuForm" class="grid">
+              <input name="RollNo" placeholder="Roll Number" required>
+              <input name="Name" placeholder="Student Name" required>
+              <label class="lbl">Date of Birth<input name="DOB" type="date" required></label>
+              <input name="FatherName" placeholder="Father Name" required>
+              <input name="MotherName" placeholder="Mother Name" required>
+              <input name="Siblings" placeholder="Brother / Sister names (irundha mattum)">
+              <input name="Phone" type="tel" placeholder="Phone (10 digits)" pattern="[0-9]{10}" required>
+              <input name="Email" type="email" placeholder="Email ID" required>
+              <select name="Class" required>
+                <option value="">Select Class</option>
+                <option>BE CSE</option><option>BE ECE</option><option>BE EEE</option>
+                <option>BE MECH</option><option>BE IT</option><option>MBA</option>
+              </select>
+              <input name="Password" type="password" id="stuPw" placeholder="Student Password (min 6)" minlength="6">
+              <textarea name="Address" placeholder="Address" rows="2" class="wide" required></textarea>
+              <div class="actions">
+                <button type="submit">Save</button>
+                <button type="button" class="ghost" id="stuCancel" hidden>Cancel</button>
+              </div>
+            </form>
+          </div>
+          <div class="card">
+            <div class="listHead"><h2>All Students (<span id="stuCount">0</span>)</h2>
+              <input type="search" id="stuSearch" placeholder="Search name / roll no / class...">
+            </div>
+            <div class="tableWrap"><table>
+              <thead><tr><th>Roll No</th><th>Name</th><th>Class</th><th>Phone</th><th>Attendance</th><th></th></tr></thead>
+              <tbody id="stuBody"></tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <div id="tabAttendance" class="pane" hidden>
+          <div class="card">
+            <h2>Attendance</h2>
+            <div class="listHead">
+              <label class="lbl">Date <input type="date" id="attDate"></label>
+              <button id="attSave">Save Attendance</button>
+            </div>
+            <div class="tableWrap"><table>
+              <thead><tr><th>Roll No</th><th>Name</th><th>Class</th><th>Status</th></tr></thead>
+              <tbody id="attBody"></tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <div id="tabMarks" class="pane" hidden>
+          <div class="card">
+            <h2>Semester Marks</h2>
+            <select id="markStu"></select>
+            <form id="markForm" class="grid" style="margin-top:12px">
+              <select name="Semester" required>
+                <option value="">Semester</option>
+                <option>1</option><option>2</option><option>3</option><option>4</option>
+                <option>5</option><option>6</option><option>7</option><option>8</option>
+              </select>
+              <input name="Subject" placeholder="Subject" required>
+              <input name="Marks" type="number" min="0" step="0.5" placeholder="Marks" required>
+              <input name="MaxMarks" type="number" min="1" value="100" placeholder="Out of" required>
+              <div class="actions"><button type="submit">Save Mark</button></div>
+            </form>
+            <p class="hint">Same Semester + Subject marubadi save panna, old mark update aagum.</p>
+            <div class="tableWrap"><table>
+              <thead><tr><th>Semester</th><th>Subject</th><th>Marks</th><th>Out of</th><th></th></tr></thead>
+              <tbody id="markBody"></tbody>
+            </table></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADMIN -->
+      <section id="adminPanel" hidden>
+        <div class="stats">
+          <div class="stat"><b id="statStu">0</b><span>Total Students</span></div>
+          <div class="stat"><b id="statProf">0</b><span>Total Professors</span></div>
+        </div>
+        <div class="two">
+          <div class="card"><h2>Students by Professor</h2>
+            <table><thead><tr><th>ID</th><th>Professor</th><th>Students</th></tr></thead><tbody id="byProf"></tbody></table></div>
+          <div class="card"><h2>Students by Class</h2>
+            <table><thead><tr><th>Class</th><th>Students</th></tr></thead><tbody id="byClass"></tbody></table></div>
+        </div>
+        <div class="card">
+          <h2 id="profFormTitle">Add Professor</h2>
+          <form id="profForm" class="grid">
+            <input name="ID" placeholder="Professor ID (e.g. PROF001)" required>
+            <input name="Name" placeholder="Professor Name" required>
+            <input name="Degree" placeholder="Degree (e.g. M.E., Ph.D)" required>
+            <input name="Experience" placeholder="Experience (e.g. 8 years)" required>
+            <label class="lbl">Date of Birth<input name="DOB" type="date" required></label>
+            <input name="Email" type="email" placeholder="Email" required>
+            <input name="Contact" type="tel" placeholder="Phone (10 digits)" pattern="[0-9]{10}" required>
+            <input name="Password" type="password" id="profPw" placeholder="Password (min 6)" minlength="6">
+            <div class="actions">
+              <button type="submit">Save Professor</button>
+              <button type="button" class="ghost" id="profCancel" hidden>Cancel</button>
+            </div>
+          </form>
+        </div>
+        <div class="card">
+          <h2>All Professors</h2>
+          <div class="tableWrap"><table>
+            <thead><tr><th>ID</th><th>Name</th><th>Degree</th><th>Experience</th><th>DOB</th><th>Email</th><th>Phone</th><th></th></tr></thead>
+            <tbody id="profBody"></tbody>
+          </table></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
